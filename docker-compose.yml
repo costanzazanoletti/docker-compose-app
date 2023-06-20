@@ -1,0 +1,31 @@
+version: '3.3'
+services:
+  python-app:
+    container_name: pyton-app
+    build: ./app
+    depends_on:
+      - mysql-db
+  mysql-db:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'db_app'
+      # So you don't have to use root, but you can change it if you like
+      MYSQL_USER: 'db_user'
+      # You can use whatever password you like
+      MYSQL_PASSWORD: 'password'
+      # Password for root access
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      # <Port exposed> : <MySQL Port running inside container>
+      - '3307:3306'
+    expose:
+      - '3307'
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+  # Database client to test database connection and data
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
